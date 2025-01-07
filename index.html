@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Booking</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background-color: #ffffff;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .header .logo {
+            font-weight: bold;
+            color: #e10000;
+        }
+
+        .alert-bar {
+            background-color: #e10000;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .booking-card {
+            background-color: #fce6e6;
+            margin: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .booking-card img {
+            border-radius: 10px;
+            width: 120px;
+            height: auto;
+            margin-right: 20px;
+        }
+
+        .booking-info {
+            flex-grow: 1;
+        }
+
+        .booking-info h2 {
+            margin: 0 0 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .booking-info p {
+            margin: 0;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .register-btn {
+            background-color: #e0e0e0;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: not-allowed;
+            color: #555;
+            font-weight: bold;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .register-btn.enabled {
+            background-color: #e10000;
+            color: white;
+            cursor: pointer;
+        }
+
+        .register-btn:active {
+            background-color: #b30000;
+        }
+
+        .register-btn.enabled:hover {
+            background-color: #cc0000;
+        }
+
+        .timer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .timer div {
+            background-color: #e10000;
+            color: white;
+            font-size: 20px;
+            padding: 10px;
+            margin: 0 5px;
+            border-radius: 5px;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .footer {
+            background-color: #fff;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .footer div {
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .footer div.active {
+            color: #e10000;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none; /* เริ่มต้นซ่อน modal */
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* ฉากหลังโปร่งแสง */
+            justify-content: center;
+            align-items: flex-end;
+            z-index: 10000;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 10px 10px 0 0;
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transform: translateY(100%);
+            animation: slideUp 0.3s ease-out forwards;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .close-btn {
+            font-size: 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .branch-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .branch-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .branch-list li:last-child {
+            border-bottom: none;
+        }
+
+        .branch-list li .full {
+            background-color: #e0e0e0;
+            color: #888;
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .branch-list li.selected {
+            background-color: #f5f5f5;
+        }
+
+        .modal-footer {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .next-btn {
+            background-color: #888;
+            color: white;
+            border: none;
+            padding: 10px 0;
+            width: 100%;
+            border-radius: 5px;
+            cursor: not-allowed;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .next-btn.active {
+            background-color: #e10000;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Registration Booking</h1>
+        <div class="logo">POP MART</div>
+    </div>
+
+    <div class="alert-bar">
+        โปรดอย่ารีเฟรชอย่างต่อเนื่อง เนื่องจากเซสชันของคุณอาจถูกล็อกได้
+    </div>
+
+    <div class="booking-card">
+        <img src="popmart.png" alt="POP MART Store">
+        <div class="booking-info">
+            <p>Open: 2024-07-25 16:00:00</p>
+            <h2>26 July POP MART Store Registration</h2>
+            <div class="timer" id="countdown">
+                <div id="days">00</div>
+                <div id="hours">00</div>
+                <div id="minutes">00</div>
+                <div id="seconds">59</div>
+            </div>
+        </div>
+        <button class="register-btn" id="registerBtn" disabled>Register</button>
+    </div>
+
+    <div class="footer">
+        <div class="active">
+            <p>Booking</p>
+        </div>
+        <div>
+            <p>My bookings</p>
+        </div>
+        <div>
+            <p>Profile</p>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="branchModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Select Branch</h2>
+                <button class="close-btn" id="closeModalBtn">&times;</button>
+            </div>
+            <ul class="branch-list" id="branchList">
+                <li>Terminal 21</li>
+                <li>Centralworld Outdoor Square A&B <span class="full">Full</span></li>
+                <li>Central Ladprao</li>
+                <li>Siam Center</li>
+                <li>Fashion Island</li>
+                <li>Centralworld</li>
+                <li>MEGABANGNA</li>
+                <li>MEGABANGNA Event <span class="full">Full</span></li>
+            </ul>
+            <div class="modal-footer">
+                <button class="next-btn" id="nextBtn">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ฟังก์ชันนับถอยหลัง
+        function startCountdown(duration) {
+            let timer = duration, minutes, seconds;
+            const countdownElement = document.getElementById('countdown');
+            const registerBtn = document.getElementById('registerBtn');
+
+            const interval = setInterval(() => {
+                days = Math.floor(timer / (3600 * 24));
+                hours = Math.floor((timer % (3600 * 24)) / 3600);
+                minutes = Math.floor((timer % 3600) / 60);
+                seconds = Math.floor(timer % 60);
+
+                document.getElementById('days').textContent = days < 10 ? "0" + days : days;
+                document.getElementById('hours').textContent = hours < 10 ? "0" + hours : hours;
+                document.getElementById('minutes').textContent = minutes < 10 ? "0" + minutes : minutes;
+                document.getElementById('seconds').textContent = seconds < 10 ? "0" + seconds : seconds;
+
+                if (--timer < 0) {
+                    clearInterval(interval);
+                    // เปิดใช้งานปุ่ม Register เมื่อเวลานับถอยหลังถึง 0
+                    registerBtn.classList.add('enabled');
+                    registerBtn.removeAttribute('disabled');
+                    registerBtn.textContent = 'Register Now';
+                }
+            }, 1000);
+        }
+
+        // เริ่มนับถอยหลัง (ตัวอย่างใช้เวลา 59 วินาที)
+        window.onload = function () {
+            const countdownSeconds = 10; // ระยะเวลานับถอยหลัง (วินาที)
+            startCountdown(countdownSeconds);
+        };
+
+        // ฟังก์ชันเปิดโมดอลเมื่อคลิกปุ่ม Register
+        document.getElementById('registerBtn').addEventListener('click', function () {
+            const branchModal = document.getElementById('branchModal');
+            branchModal.style.display = 'flex'; // แสดงโมดอล
+        });
+
+        // ฟังก์ชันปิดโมดอลเมื่อคลิกปุ่มปิด
+        document.getElementById('closeModalBtn').addEventListener('click', function () {
+            const branchModal = document.getElementById('branchModal');
+            branchModal.style.display = 'none'; // ซ่อนโมดอล
+        });
+
+        // ฟังก์ชันเลือกสาขาและเปิดใช้งานปุ่ม Next
+        const branches = document.querySelectorAll('.branch-list li');
+        const nextBtn = document.getElementById('nextBtn');
+
+        branches.forEach(branch => {
+            branch.addEventListener('click', function () {
+                // ยกเลิกการเลือกสาขาทั้งหมดก่อน
+                branches.forEach(b => b.classList.remove('selected'));
+                // เลือกสาขาที่คลิก
+                this.classList.add('selected');
+                // เปิดใช้งานปุ่ม Next
+                nextBtn.classList.add('active');
+                nextBtn.disabled = false;
+            });
+        });
+
+        // ฟังก์ชันเมื่อคลิกปุ่ม Next
+        nextBtn.addEventListener('click', function () {
+            if (this.classList.contains('active')) {
+                window.location.href = 'file:///C:/Users/Admin/Desktop/%E0%B9%82%E0%B8%9F%E0%B8%A5%E0%B9%80%E0%B8%94%E0%B8%AD%E0%B8%A3%E0%B9%8C%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88%20(4)/popmartth.rocket-booking.app/booking/time-4d9e0c9a57c4e.html'; // เปลี่ยน 'nextpage.html' เป็น URL ของไฟล์ HTML ที่คุณต้องการ
+            }
+        });
+    </script>
+</body>
+</html>
